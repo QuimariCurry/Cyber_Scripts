@@ -1,0 +1,19 @@
+#! /bin/bash
+
+LOG_FILE="/var.log/auth.log"
+if [ ! -f "$LOG_FILE" ]; then
+    echo "Log file not found."
+    exit 1
+fi
+
+FAILED_LOGINS=$(grep "Failed password" "$LOG_FILE")
+if [ -z "$FAILED_LOGINS" ]; then
+    echo " no failed login attempts found."
+    exit 0
+fi
+
+echo "$FAILED_LOGINS"
+
+echo "$FAILED_LOGINS" | awk '{print $(NF-3)}' | sort | uniq -c | sort -nr
+
+echo "$FAILED_LOGINS" | awk '{print $(NF-5)}' | sort | uniq -c | sort -nr
